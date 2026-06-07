@@ -396,11 +396,24 @@
         }
 
         .ranking-logo {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
             object-fit: contain;
             flex-shrink: 0;
+        }
+        .ranking-logo-fb {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            font-family: var(--font-mono);
         }
 
         .ranking-badge {
@@ -695,19 +708,34 @@
             { name: "Devin", desc: "Cognition开发的AI软件工程师", badge: "专业", metric: "7.7", metricLabel: "评测" }
         ];
 
+        const brandColors = {
+            'OpenAI': '#10a37f', 'Anthropic': '#d4a574', 'Google': '#4285f4',
+            'xAI': '#ffffff', 'Meta': '#0668e1', 'Alibaba': '#ff6a00',
+            'Baidu': '#2319dc', 'DeepSeek': '#4d6bfe', 'Z.ai': '#365eff',
+            'Moonshot': '#000000', 'Xiaomi': '#ff6900', 'ByteDance': '#00f0ff',
+            'Tencent': '#1a9fff', 'Mistral': '#f24e1e', 'Microsoft': '#00a4ef',
+            'MiniMax': '#6c5ce7'
+        };
+
         function renderRanking(containerId, data, showMetrics = false) {
             const container = document.getElementById(containerId);
             let html = '';
 
             data.forEach((item, index) => {
                 const rankClass = index < 3 ? `top-${index + 1}` : 'normal';
+                const fbColor = brandColors[item.badge] || '#666';
+                const fbLetter = (item.badge || '?')[0].toUpperCase();
+
+                const logoHtml = item.logo
+                    ? `<img class="ranking-logo" src="${item.logo}" onerror="this.outerHTML='<span class=\\'ranking-logo-fb\\' style=\\'background:${fbColor}\\'>${fbLetter}</span>'" alt="">`
+                    : (item.badge ? `<span class="ranking-logo-fb" style="background:${fbColor}">${fbLetter}</span>` : '');
 
                 html += `
                     <div class="ranking-item">
                         <div class="ranking-rank ${rankClass}">#${index + 1}</div>
                         <div class="ranking-info">
                             <div class="ranking-name">
-                                ${item.logo ? `<img class="ranking-logo" src="${item.logo}" onerror="this.style.display='none'" alt="">` : ''}
+                                ${logoHtml}
                                 ${item.name}
                                 <span class="ranking-badge">${item.badge}</span>
                             </div>
