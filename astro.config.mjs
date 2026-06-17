@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://haozki.github.io',
-  base: './',
+  site: 'https://ai-box.dev',
+  base: '/',
   output: 'static',
 });
