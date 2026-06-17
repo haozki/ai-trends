@@ -12,6 +12,15 @@
 - `assets/` — 参考数据（models.md, projects.md, coding-agents.md, companies.md）
 - `ProjectsCollection/` — AI项目资料库（10个项目，面向公众号文章素材，每个含info.md+asset/）
 - `AGENTS.md` — 项目级规则
+- `src/content/` — Astro 内容集合（博客文章）
+- `src/content.config.ts` — 集合 Schema 定义
+
+## 技术栈
+
+- **框架**：Astro 5（静态站点生成器）
+- **内容管理**：Astro 内容集合（Content Collections）
+- **构建**：`npm run build` 生成 `dist/` 目录
+- **部署**：本地构建 → 推送 `dist/` 到 `gh-pages` 分支
 
 ## 数据来源
 
