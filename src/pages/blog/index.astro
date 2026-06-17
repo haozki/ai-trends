@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BaseLayout title="博客文章 - AIBOX">
+  <main class="blog-list">
+    <h1>博客文章</h1>
+    <p class="subtitle">AI 科技领域的深度分析与技术分享</p>
+    
+    <div class="posts-grid">
+      {sortedPosts.map(post => (
+        <article class="post-card">
+          <div class="post-content">
+            <h2>
+              <a href={`/ai-trends/blog/${post.id}`}>
+                {post.data.title}
+              </a>
+            </h2>
+            <p class="description">{post.data.description}</p>
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+              </time>
+              <span class="author">{post.data.author}</span>
+            </div>
+            {post.data.tags.length > 0 && (
+              <div class="tags">
+                {post.data.tags.map(tag => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+    
+    {sortedPosts.length === 0 && (
+      <div class="empty-state">
+        <p>暂无文章</p>
+      </div>
+    )}
+  </main>
+</BaseLayout>
+
+<style>
+  .blog-list {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  h1 {
+    color: var(--cyan);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  
+  .subtitle {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+  
+  .posts-grid {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .post-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+  }
+  
+  .post-content h2 {
+    margin-bottom: 0.75rem;
+  }
+  
+  .post-content h2 a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .post-content h2 a:hover {
+    color: var(--cyan);
+  }
+  
+  .description {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+  }
+  
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .post-card {
+      padding: 1rem;
+    }
+  }
+</style>
