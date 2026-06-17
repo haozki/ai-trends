@@ -1,19 +1,322 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 ---
 
 <BaseLayout title="AIBOX - AI 科技导航">
-  <main>
-    <h1 style="color: var(--cyan); font-size: 3rem; text-align: center; margin-top: 30vh;">
-      AIBOX
-    </h1>
-    <p style="text-align: center; color: var(--text-muted); margin-top: 1rem; font-size: 1.2rem;">
-      AI 科技导航站
-    </p>
-    <nav style="text-align: center; margin-top: 2rem;">
-      <a href="./blog/" style="color: var(--cyan); text-decoration: none; font-size: 1.1rem; border: 1px solid var(--cyan); padding: 0.5rem 1.5rem; border-radius: 0.5rem; transition: all 0.2s;">
-        查看博客文章 →
-      </a>
-    </nav>
+  <main class="blog-list">
+    <div class="container">
+      <header class="blog-header">
+        <h1 class="blog-title">
+          <span class="gradient-text">AIBOX</span>
+        </h1>
+        <p class="blog-subtitle">AI 科技领域的深度分析与技术分享</p>
+      </header>
+      
+      <div class="posts-grid">
+        {sortedPosts.map(post => (
+          <article class="post-card">
+            <div class="post-content">
+              <h2 class="post-title">
+                <a href={`./blog/${post.id}`}>
+                  {post.data.title}
+                </a>
+              </h2>
+              <p class="post-description">{post.data.description}</p>
+              <div class="post-meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <span class="post-author">{post.data.author}</span>
+              </div>
+              {post.data.tags.length > 0 && (
+                <div class="post-tags">
+                  {post.data.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div class="post-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </article>
+        ))}
+      </div>
+      
+      {sortedPosts.length === 0 && (
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+            </svg>
+          </div>
+          <p>暂无文章</p>
+          <p class="empty-hint">敬请期待更多精彩内容</p>
+        </div>
+      )}
+    </div>
   </main>
+  
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">© 2026 AIBOX. 探索AI的未来。</p>
+        <div class="footer-links">
+          <a href="https://github.com/haozki/ai-trends" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 </BaseLayout>
+
+<style>
+  .blog-list {
+    padding: 6rem 0;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+  }
+  
+  .blog-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+  .blog-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+  }
+  
+  .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .blog-subtitle {
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .posts-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .post-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
+  
+  .post-card:hover .post-arrow {
+    transform: translateX(4px);
+    color: var(--primary);
+  }
+  
+  .post-content {
+    flex: 1;
+  }
+  
+  .post-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  
+  .post-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .post-title a:hover {
+    color: var(--primary);
+  }
+  
+  .post-description {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1.1rem;
+  }
+  
+  .post-meta {
+    display: flex;
+    gap: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .post-author {
+    color: var(--primary);
+    font-weight: 500;
+  }
+  
+  .post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .tag {
+    background: var(--bg-secondary);
+    color: var(--primary);
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+  }
+  
+  .tag:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .post-arrow {
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    margin-left: 2rem;
+  }
+  
+  .post-arrow svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 6rem 2rem;
+    color: var(--text-muted);
+  }
+  
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 2rem;
+    color: var(--text-light);
+  }
+  
+  .empty-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .empty-hint {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+  
+  /* 页脚 */
+  .footer {
+    padding: 3rem 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .footer-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .footer-links a {
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
+  
+  .footer-links a:hover {
+    color: var(--primary);
+  }
+  
+  @media (max-width: 768px) {
+    .blog-list {
+      padding: 4rem 0;
+    }
+    
+    .blog-header {
+      margin-bottom: 3rem;
+    }
+    
+    .post-card {
+      padding: 1.5rem;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .post-arrow {
+      margin-left: 0;
+      margin-top: 1.5rem;
+      align-self: flex-end;
+    }
+    
+    .post-title {
+      font-size: 1.25rem;
+    }
+    
+    .post-description {
+      font-size: 1rem;
+    }
+    
+    .footer-content {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

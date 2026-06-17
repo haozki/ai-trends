@@ -25,165 +25,285 @@ const formattedDate = post.data.pubDate.toLocaleDateString('zh-CN', {
 
 <BaseLayout title={`${post.data.title} - AIBOX`}>
   <main class="blog-post">
-    <article>
-      <header>
-        <h1>{post.data.title}</h1>
-        <div class="meta">
-          <time datetime={post.data.pubDate.toISOString()}>
-            {formattedDate}
-          </time>
-          <span class="author">作者: {post.data.author}</span>
-        </div>
-        {post.data.tags.length > 0 && (
-          <div class="tags">
-            {post.data.tags.map(tag => (
-              <span class="tag">{tag}</span>
-            ))}
+    <div class="container">
+      <article class="article">
+        <header class="article-header">
+          <div class="article-meta">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {formattedDate}
+            </time>
+            <span class="article-author">{post.data.author}</span>
           </div>
-        )}
-      </header>
-      
-      <div class="content">
-        <Content />
-      </div>
-    </article>
-    
-    <nav class="back-link">
-      <a href="../../">← 返回首页</a>
-    </nav>
+          
+          <h1 class="article-title">{post.data.title}</h1>
+          
+          {post.data.tags.length > 0 && (
+            <div class="article-tags">
+              {post.data.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </header>
+        
+        <div class="article-content">
+          <Content />
+        </div>
+        
+        <footer class="article-footer">
+          <nav class="back-link">
+            <a href="/" class="btn btn-secondary">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              返回首页
+            </a>
+          </nav>
+        </footer>
+      </article>
+    </div>
   </main>
 </BaseLayout>
 
 <style>
   .blog-post {
+    padding: 6rem 0;
+    min-height: 100vh;
+  }
+  
+  .container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 0 2rem;
+    width: 100%;
   }
   
-  header {
-    margin-bottom: 2rem;
+  .article {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  
+  .article-header {
+    padding: 3rem 3rem 2rem;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 1rem;
   }
   
-  h1 {
-    color: var(--cyan);
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    line-height: 1.2;
-  }
-  
-  .meta {
+  .article-meta {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   
-  .tags {
+  .article-author {
+    color: var(--primary);
+    font-weight: 500;
+  }
+  
+  .article-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  
+  .article-tags {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
   }
   
   .tag {
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.8rem;
+    background: var(--bg-secondary);
+    color: var(--primary);
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
   }
   
-  .content {
+  .tag:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .article-content {
+    padding: 3rem;
     line-height: 1.8;
     color: var(--text);
   }
   
-  .content :global(h2) {
-    color: var(--cyan);
-    margin-top: 2rem;
+  .article-content :global(h2) {
+    color: var(--primary);
+    font-size: 1.75rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  
+  .article-content :global(h3) {
+    color: var(--secondary);
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
     margin-bottom: 1rem;
   }
   
-  .content :global(h3) {
-    color: var(--magenta);
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+  .article-content :global(p) {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
   }
   
-  .content :global(p) {
-    margin-bottom: 1rem;
-  }
-  
-  .content :global(ul),
-  .content :global(ol) {
-    margin-bottom: 1rem;
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 1.5rem;
     padding-left: 2rem;
   }
   
-  .content :global(li) {
-    margin-bottom: 0.5rem;
+  .article-content :global(li) {
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
   }
   
-  .content :global(code) {
-    background: var(--code-bg);
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
-    font-family: 'JetBrains Mono', monospace;
+  .article-content :global(code) {
+    background: var(--bg-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
     font-size: 0.9em;
+    color: var(--primary);
+    border: 1px solid var(--border);
   }
   
-  .content :global(pre) {
-    background: var(--code-bg);
-    padding: 1rem;
-    border-radius: 0.5rem;
+  .article-content :global(pre) {
+    background: var(--text);
+    color: var(--bg);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
     overflow-x: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
   
-  .content :global(pre code) {
+  .article-content :global(pre code) {
     background: none;
     padding: 0;
+    color: inherit;
+    border: none;
   }
   
-  .content :global(blockquote) {
-    border-left: 3px solid var(--cyan);
-    padding-left: 1rem;
-    margin-left: 0;
-    margin-bottom: 1rem;
+  .article-content :global(blockquote) {
+    border-left: 4px solid var(--primary);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: var(--bg-secondary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
     color: var(--text-muted);
+    font-style: italic;
   }
   
-  .content :global(strong) {
-    color: var(--amber);
+  .article-content :global(strong) {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  
+  .article-content :global(a) {
+    color: var(--secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+  }
+  
+  .article-content :global(a:hover) {
+    color: var(--primary);
+  }
+  
+  .article-footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
   }
   
   .back-link {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-start;
   }
   
-  .back-link a {
-    color: var(--cyan);
-    text-decoration: none;
-    transition: color 0.2s;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
   }
   
-  .back-link a:hover {
-    color: var(--magenta);
+  .btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+  }
+  
+  .btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .btn-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .btn:hover .btn-icon {
+    transform: translateX(-4px);
   }
   
   @media (max-width: 768px) {
-    h1 {
-      font-size: 2rem;
+    .blog-post {
+      padding: 4rem 0;
     }
     
-    .meta {
+    .article-header {
+      padding: 2rem 1.5rem 1.5rem;
+    }
+    
+    .article-content {
+      padding: 2rem 1.5rem;
+    }
+    
+    .article-footer {
+      padding: 1.5rem;
+    }
+    
+    .article-title {
+      font-size: 1.75rem;
+    }
+    
+    .article-meta {
       flex-direction: column;
       gap: 0.5rem;
+    }
+    
+    .article-content :global(h2) {
+      font-size: 1.5rem;
+    }
+    
+    .article-content :global(h3) {
+      font-size: 1.25rem;
     }
   }
 </style>
