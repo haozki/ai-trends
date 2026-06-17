@@ -1,0 +1,43 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <style is:global>
+    :root {
+      --cyan: #00ffc8;
+      --magenta: #ff2d7b;
+      --amber: #ffb800;
+      --bg: #0a0a0c;
+      --surface: #141418;
+      --text: #f0f0f0;
+      --text-muted: #6b6b78;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <slot />
+</body>
+</html>
